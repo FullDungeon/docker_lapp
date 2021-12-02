@@ -1,0 +1,38 @@
+version: '3.0'
+
+services:
+  web:
+    build:
+      context: .
+    container_name: web
+    ports:
+      - '80:80'
+    volumes:
+      - ${APP_SRC}:/var/www/${APP_NAME}/
+      - ${APP2_SRC}:/var/www/${APP2_NAME}/
+      - ./apache2/sites-available/:/etc/apache2/sites-enabled/
+    networks:
+      - web-network
+
+  db:
+    image: postgres:9.6
+    container_name: db
+    ports:
+      - '5432:5432'
+    tty: true
+    environment:
+      POSTGRES_DATABASES: ${POSTGRES_DATABASES}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    networks:
+      - web-network
+
+networks:
+  web-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
