@@ -1,13 +1,9 @@
 FROM php:8.0-apache
 
 
-# добавить пользователя
-ENV GID 1000
-ENV UID 1000
-RUN groupadd -g ${GID} developer && \
-    useradd -u ${UID} -g developer -m developer -G root,www-data && \
-    usermod -p "*" developer -s /bin/bash && \
-    usermod -aG www-data developer
+# добавление пользователя
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
 
 # установка зависимостей
 RUN apt-get update && apt-get install -y \
@@ -44,5 +40,6 @@ ENV APACHE_RUN_USER #1000
 ENV APACHE_RUN_GROUP #1000
 RUN a2enmod rewrite headers expires
 
+USER www
 
 WORKDIR /var/www/
