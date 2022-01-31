@@ -1,27 +1,38 @@
 # О сборке
-Сборка Docker для разработки нескольких приложений с использованием Linux, Apache, PostgreSQL и PHP.
+Сборка Docker для разработки приложений с использованием Linux, Apache, PostgreSQL и PHP.
 
-Струкура:  
-__apache2/apache2.conf__  - _файл конфигурации веб-сервера apache_;  
-__apache2/site-available__  - _файлы конфигурации приложений_;  
-__postgres/docker-entrypoint-initdb.d/__  - _том контейнера db_;  
-__.env__ - файл с информацией о приложениях и БД.
+### Струкура:
+```
+apache2/apache2.conf      файл конфигурации веб-сервера apache;  
+apache2/site-available    файлы конфигурации приложений;  
+postgres/data/            том контейнера db;  
+.env                      файл с информацией о приложениях и БД.
+```
+
 
 # Использование
-Собрать контейнеры:
+### **Сборка** проекта:
+```
+docker-compose build
+```
+
+### **Запуск** _(перезапуск)_ проекта:
 ```
 docker-compose up
+docker-compose restart
 ```
+
 Чтобы полностью пересобрать контейнеры:
 ```
 docker-compose up -d --no-deps --build
 ```
 
-Работа в CLI __php-apache__ и __postgres__:
+### Работа в CLI __php-apache__ и __postgres__:
 ```
 docker-compose exec -it web bash
 docker-compose exec -it db bash
 ```
+
 
 ## Приложения
 По умолчанию в сборке для примера создано одно приложение app. Чтобы добавить еще одно приложение необходимо выполнить несколько действий:
@@ -37,12 +48,12 @@ _"127.0.0.1   app.test"_
 
 # Для Laravel
 ## Подготовка к разработке
-1. В каталог приложения (указан в файле __.env) скопировать шаблон приложения Laravel:
+1. В каталог приложения (который указан в файле _.env_) скопировать шаблон приложения Laravel:
 ```
 git clone https://github.com/laravel/laravel.git
 ```
 
-2. Создать пользователя и БД через CLI PostgreSQL в конте _db_:
+2. Создать пользователя и БД через CLI PostgreSQL в контейнере _db_:
 ```
 CREATE USER username WITH PASSWORD 'password';
 CREATE DATABASE database_name;
