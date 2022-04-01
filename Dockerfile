@@ -1,16 +1,20 @@
-FROM php:8.0-apache
+ARG PHP_VERSION
 
+FROM php:${PHP_VERSION}-apache
 
-# добавление пользователя
-RUN groupadd -g 1000 www
-RUN useradd -u 1000 -ms /bin/bash -g www www
+# добавить пользователя
+ENV GID 1000
+ENV UID 1000
+RUN groupadd -g ${GID} developer && \
+    useradd -u ${UID} -g developer -m developer -G root,www-data && \
+    usermod -p "*" developer -s /bin/bash && \
+    usermod -aG www-data developer
 
 # установка зависимостей
 RUN apt-get update && apt-get install -y \
     curl \
     vim \
     mlocate \
-    git \
     build-essential \
     wget \
     zip \
@@ -31,8 +35,10 @@ RUN docker-php-ext-install \
     pgsql \
     pdo_pgsql
 
-# установка composer
+
 COPY ./apache2/apache2.conf /etc/apache2/apache2.conf
+
+# установка composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 
@@ -42,6 +48,6 @@ ENV APACHE_RUN_USER #1000
 ENV APACHE_RUN_GROUP #1000
 RUN a2enmod rewrite headers expires
 
-USER www
+USER developer
 
 WORKDIR /var/www/
